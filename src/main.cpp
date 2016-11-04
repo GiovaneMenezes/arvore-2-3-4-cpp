@@ -13,14 +13,7 @@ int main() {
 	arvore234.inserir(10);
 	arvore234.inserir(30);
 	arvore234.inserir(50);
-	//arvore234.inserir(15);
-	//arvore234.inserir(18);
-	//arvore234.inserir(55);
-	//arvore234.inserir(60);
-	//arvore234.inserir(32);
-	//arvore234.inserir(51);
-	//arvore234.inserir(61);
-	//arvore234.inserir(62);
+	
 	
 	return 0;
 }
