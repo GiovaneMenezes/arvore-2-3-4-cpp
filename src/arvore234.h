@@ -11,6 +11,7 @@ class Arvore234{
 		Arvore234();
 		bool busca(int); //**
 		void inserir(int);//**
+		void imprime();
 		//void remover();
 		//void imprimir();
 	private:
@@ -22,5 +23,6 @@ class Arvore234{
 		bool eFolha(NO**); //**
 		NO *encontraNoFilho(NO**,int); //**
 		void inserirValor(NO**, int);//**
+		void imprime(NO*);
 };
 

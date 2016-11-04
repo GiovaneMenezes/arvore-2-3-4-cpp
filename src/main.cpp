@@ -20,6 +20,7 @@ int main() {
 	arvore234.inserir(95);
 	arvore234.inserir(77);
 	
+	arvore234.imprime();
 	
 	if(arvore234.busca(100))
 		cout << "Encontrou!!" << endl;

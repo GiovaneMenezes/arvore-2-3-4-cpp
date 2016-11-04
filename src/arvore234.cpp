@@ -8,7 +8,7 @@ Arvore234::Arvore234(){
 	//A raiz da árvore é criada
 	//o primeiro filho recebe nulo
 	raiz = new NO;
-	for(int i=0;i<3;i++){raiz->ponteiros[i] = 0;}
+	for(int i=0;i<4;i++){raiz->ponteiros[i] = 0;}
 	raiz->quantDados = 0;
 	raiz->pai = 0;
 }
@@ -101,7 +101,7 @@ void Arvore234::divide(NO **atual){
 	if((*atual)->pai == 0){
 		//cria novo NO B
 		NO *B = new NO;
-		for(int i=0;i<3;i++){B->ponteiros[i]=0;}
+		for(int i=0;i<4;i++){B->ponteiros[i]=0;}
 		B->ponteiros[1] = *atual;
 		B->pai = 0;
 		B->quantDados = 1;
@@ -109,14 +109,16 @@ void Arvore234::divide(NO **atual){
 		
 		//cria novo NO C
 		NO *C = new NO;
-		for(int i=0;i<3;i++){C->ponteiros[i]=0;}
+		for(int i=0;i<4;i++){C->ponteiros[i]=0;}
 		C->ponteiros[1] = *atual;
 		C->pai = B;
 		C->quantDados = 1;
 		C->dados[0] = (*atual)->dados[2];
 		if(!eFolha(atual)){
 			C->ponteiros[0] = (*atual)->ponteiros[2];
+			((*atual)->ponteiros[2])->pai = C;
 			C->ponteiros[1] = (*atual)->ponteiros[3];
+			((*atual)->ponteiros[3])->pai = C;
 		}
 		
 		B->ponteiros[0] = *atual;
@@ -140,7 +142,9 @@ void Arvore234::divide(NO **atual){
 		C->dados[0] = (*atual)->dados[2];
 		if(!eFolha(atual)){
 			C->ponteiros[0] = (*atual)->ponteiros[2];
+			((*atual)->ponteiros[2])->pai = C;
 			C->ponteiros[1] = (*atual)->ponteiros[3];
+			((*atual)->ponteiros[3])->pai = C;
 		}
 		
 		paiNo->ponteiros[paiNo->quantDados] = C; 
@@ -150,17 +154,31 @@ void Arvore234::divide(NO **atual){
 
 void Arvore234::inserirValor(NO **atual, int valor){
 	int quant = (*atual)->quantDados;
-	int pos = quant;
+	int temp;
+	(*atual)->dados[quant++] = valor;
+	(*atual)->quantDados++;
 	for(int i=0;i<quant;i++){
-		if(valor<(*atual)->dados[i]){
-			pos = i;
-			break;	
+		for(int j=i+1;j<quant;j++){
+			if((*atual)->dados[i]>(*atual)->dados[j]){
+				temp = (*atual)->dados[i];
+				(*atual)->dados[i] = (*atual)->dados[j];
+				(*atual)->dados[j] = temp;
+			}
 		}
 	}
-	for(int j=quant;j>pos;j--){
-		(*atual)->dados[j+1] = (*atual)->dados[j];
-	}
-	(*atual)->dados[pos] = valor;
-	(*atual)->quantDados++;
 }
 
+void Arvore234::imprime(NO *atual){
+	int quant=atual->quantDados;
+	for(int i=0;i<quant;i++)
+		cout << atual->dados[i] << " ";
+	cout << endl;
+	if(!eFolha(&atual)){
+		for(int i=0;i<=quant;i++)
+			imprime(atual->ponteiros[i]);
+	}
+}
+
+void Arvore234::imprime(){
+	imprime(raiz);
+}
