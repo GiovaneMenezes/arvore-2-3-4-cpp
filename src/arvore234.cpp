@@ -8,7 +8,7 @@ Arvore234::Arvore234(){
 	//A raiz da árvore é criada
 	//o primeiro filho recebe nulo
 	raiz = new NO;
-	raiz->ponteiros[0] = 0;
+	for(int i=0;i<3;i++){raiz->ponteiros[i] = 0;}
 	raiz->quantDados = 0;
 	raiz->pai = 0;
 }
@@ -90,16 +90,77 @@ void Arvore234::inserir(int valor){
 
 	}
 	//após a busca por filho insere o valor na posicao encontrada/atual;
-	insereValor(&atual, valor);
+	inserirValor(&atual, valor);
 
 }
  
 
 //função divide, auxilia na inserção
-void Arvore234:divide(NO **atual){
-
-	
+void Arvore234::divide(NO **atual){
+	//se for raiz
+	if((*atual)->pai == 0){
+		//cria novo NO B
+		NO *B = new NO;
+		for(int i=0;i<3;i++){B->ponteiros[i]=0;}
+		B->ponteiros[1] = *atual;
+		B->pai = 0;
+		B->quantDados = 1;
+		B->dados[0] = (*atual)->dados[1];
+		
+		//cria novo NO C
+		NO *C = new NO;
+		for(int i=0;i<3;i++){C->ponteiros[i]=0;}
+		C->ponteiros[1] = *atual;
+		C->pai = B;
+		C->quantDados = 1;
+		C->dados[0] = (*atual)->dados[2];
+		if(!eFolha(atual)){
+			C->ponteiros[0] = (*atual)->ponteiros[2];
+			C->ponteiros[1] = (*atual)->ponteiros[3];
+		}
+		
+		B->ponteiros[0] = *atual;
+		B->ponteiros[1] = C;
+		(*atual)->pai = B;
+		(*atual)->quantDados = 1;
+		raiz = B; //raiz atributo da classe		
+	}
+	//se n�o � raiz
+	else{
+		NO *paiNo = (*atual)->pai;
+		//envia B para o pai do atual
+		paiNo->dados[paiNo->quantDados++] = (*atual)->dados[1];
+		
+		//cria novo NO C
+		NO *C = new NO;
+		for(int i=0;i<3;i++){C->ponteiros[i]=0;}
+		C->ponteiros[1] = *atual;
+		C->pai = paiNo;
+		C->quantDados = 1;
+		C->dados[0] = (*atual)->dados[2];
+		if(!eFolha(atual)){
+			C->ponteiros[0] = (*atual)->ponteiros[2];
+			C->ponteiros[1] = (*atual)->ponteiros[3];
+		}
+		
+		paiNo->ponteiros[paiNo->quantDados] = C; 
+		(*atual)->quantDados = 1;
+	}
 }
 
-
+void Arvore234::inserirValor(NO **atual, int valor){
+	int quant = (*atual)->quantDados;
+	int pos = quant;
+	for(int i=0;i<quant;i++){
+		if(valor<(*atual)->dados[i]){
+			pos = i;
+			break;	
+		}
+	}
+	for(int j=quant;j>pos;j--){
+		(*atual)->dados[j+1] = (*atual)->dados[j];
+	}
+	(*atual)->dados[pos] = valor;
+	(*atual)->quantDados++;
+}
 
