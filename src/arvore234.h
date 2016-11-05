@@ -9,13 +9,13 @@ typedef struct no {
 class Arvore234{
 	public:
 		Arvore234();
-		bool busca(int); //**
 		void inserir(int);//**
 		void imprime();
-		//void remover();
+		void remover(int);
 		//void imprimir();
 	private:
 		NO *raiz;
+		NO *busca(int); //**
 		void insere(NO**, int); //**
 		void divide(NO**); //**
 		bool estanoNo(NO**, int); //**
@@ -24,5 +24,7 @@ class Arvore234{
 		NO *encontraNoFilho(NO**,int); //**
 		void inserirValor(NO**, int);//**
 		void imprime(NO*);
+		void bubblesort(NO**);
+		NO *encontraSucessor(NO*, int);
 };
 

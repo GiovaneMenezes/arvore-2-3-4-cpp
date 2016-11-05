@@ -42,6 +42,7 @@ bool Arvore234::estanoNo(NO **atual, int valor){ //**
 //Essa funÃ§Ã£o retorna o filho do no atual, onde deve esta
 //o valor
 
+//funcao auxiliar da busca
 NO* Arvore234::encontraNoFilho(NO **atual, int valor){ //**
 	int quant = (*atual)->quantDados;
 	if(eFolha(atual))//se for folhar nao tem filhos posiveis retorna 0
@@ -57,21 +58,20 @@ NO* Arvore234::encontraNoFilho(NO **atual, int valor){ //**
 }
 
 //busca um determinado valor na arvore
-bool Arvore234::busca(int valor){ //**
+NO* Arvore234::busca(int valor){ //**
 	NO *atual = raiz;
 	while(atual!=0){
 		if(estanoNo(&atual, valor)){
-			return true;
+			return atual;
 		}
 		else{
 			atual = encontraNoFilho(&atual, valor);
 		}
 	}
-	return false;
+	return 0;
 }
 
 //inserir 
-
 void Arvore234::inserir(int valor){
 	NO *atual = raiz;
 	while(1){
@@ -125,7 +125,7 @@ void Arvore234::divide(NO **atual){
 		B->ponteiros[1] = C;
 		(*atual)->pai = B;
 		(*atual)->quantDados = 1;
-		raiz = B; //raiz atributo da classe		
+		raiz = B; //raiz atributo da classe	
 	}
 	//se não é raiz
 	else{
@@ -150,13 +150,19 @@ void Arvore234::divide(NO **atual){
 		paiNo->ponteiros[paiNo->quantDados] = C; 
 		(*atual)->quantDados = 1;
 	}
+	bubblesort(&(*atual)->pai);
 }
 
 void Arvore234::inserirValor(NO **atual, int valor){
 	int quant = (*atual)->quantDados;
-	int temp;
 	(*atual)->dados[quant++] = valor;
 	(*atual)->quantDados++;
+	bubblesort(atual);
+}
+
+void Arvore234::bubblesort(NO **atual){
+	int quant = (*atual)->quantDados;
+	int temp;
 	for(int i=0;i<quant;i++){
 		for(int j=i+1;j<quant;j++){
 			if((*atual)->dados[i]>(*atual)->dados[j]){
@@ -166,12 +172,65 @@ void Arvore234::inserirValor(NO **atual, int valor){
 			}
 		}
 	}
+	//se o no nao for folha, realiza um bubblesort para ordenar os ponteiros do no.
+	if(!eFolha(atual)){
+		NO *temp_no;
+		for(int i=0;i<=quant;i++){
+			for(int j=i+1;j<=quant;j++){
+				if(((*atual)->ponteiros[i])->dados[0]>((*atual)->ponteiros[j])->dados[0]){
+					temp_no = (*atual)->ponteiros[i];
+					(*atual)->ponteiros[i] = (*atual)->ponteiros[j];
+					(*atual)->ponteiros[j] = temp_no;
+				}
+			}
+		}
+	}
+}
+
+NO* Arvore234::encontraSucessor(NO *atual, int valor){
+	if(!eFolha(&atual)){
+		for(int i=0;i<atual->quantDados;i++){
+			if(atual->dados[i] == valor){
+				atual = atual->ponteiros[i+1];
+				break;
+			}
+		}
+	}
+	while(!eFolha(&atual)){
+		atual = atual->ponteiros[0];
+	}
+	return atual;
+}
+
+void Arvore234::remover(int valor){
+	NO *atual = busca(valor);
+	if(atual!=0){
+		if(!eFolha(&atual)){
+			for(int i=0;i<atual->quantDados;i++){
+				if(atual->dados[i]==valor)
+					atual->dados[i]=(encontraSucessor(atual,valor))->dados[0];
+			}
+			atual = encontraSucessor(atual,valor);			
+		}
+	}
+}
+
+void Arvore234::exclui(NO *atual, int valor){
+	int pos;
+	for(int i=0;i<atual->quantDados;i++){
+		if(atual->dados[i]==valor){
+			pos = i;
+		}
+	}
+	for(int j=pos;j<atual->quantDados-1;j++){
+		atual->dados[j] = atual->dados[j+1];
+	}
 }
 
 void Arvore234::imprime(NO *atual){
 	int quant=atual->quantDados;
 	for(int i=0;i<quant;i++)
-		cout << atual->dados[i] << " ";
+		cout << " [ "<< atual->dados[i] << " ] ";
 	cout << endl;
 	if(!eFolha(&atual)){
 		for(int i=0;i<=quant;i++)
