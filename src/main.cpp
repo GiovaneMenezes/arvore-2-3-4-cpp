@@ -14,8 +14,7 @@ int main() {
 	for(int i=1;i<=10;i++){
 		arvore234.inserir(i);
 	}
-	
-	arvore234.remover(4);
+	arvore234.remover(2);
 	arvore234.imprime();
 	
 	/*if(arvore234.busca(77))

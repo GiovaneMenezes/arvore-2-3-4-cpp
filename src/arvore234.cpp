@@ -155,7 +155,7 @@ void Arvore234::divide(NO **atual){
 
 void Arvore234::inserirValor(NO **atual, int valor){
 	int quant = (*atual)->quantDados;
-	(*atual)->dados[quant++] = valor;
+	(*atual)->dados[quant] = valor;
 	(*atual)->quantDados++;
 	bubblesort(atual);
 }
@@ -202,19 +202,6 @@ NO* Arvore234::encontraSucessor(NO *atual, int valor){
 	return atual;
 }
 
-void Arvore234::remover(int valor){
-	NO *atual = busca(valor);
-	if(atual!=0){
-		if(!eFolha(&atual)){
-			for(int i=0;i<atual->quantDados;i++){
-				if(atual->dados[i]==valor)
-					atual->dados[i]=(encontraSucessor(atual,valor))->dados[0];
-			}
-			atual = encontraSucessor(atual,valor);			
-		}
-	}
-}
-
 void Arvore234::exclui(NO *atual, int valor){
 	int pos;
 	for(int i=0;i<atual->quantDados;i++){
@@ -224,6 +211,117 @@ void Arvore234::exclui(NO *atual, int valor){
 	}
 	for(int j=pos;j<atual->quantDados-1;j++){
 		atual->dados[j] = atual->dados[j+1];
+	}
+	atual->quantDados--;
+}
+
+bool Arvore234::rotar(NO *atual){
+	int posicao;
+	NO *noPai = atual->pai;
+	NO *noIrmao;
+	if(!eRaiz(&atual)){
+		for(int i=0;i<=noPai->quantDados;i++){
+			if(noPai->ponteiros[i]==atual){
+				posicao = i;
+				break;
+			}
+		}
+		int quantIrmao;
+		if(posicao>0){
+			noIrmao = noPai->ponteiros[posicao-1];
+			quantIrmao = noIrmao->quantDados;
+			if(noIrmao->quantDados>1){
+				inserirValor(&atual, noPai->dados[posicao-1]);
+				noPai->dados[posicao-1] = noIrmao->dados[quantIrmao-1];
+				exclui(noIrmao, noIrmao->dados[quantIrmao-1]);
+				return true;
+			}				
+		}
+		if(posicao==0){
+			noIrmao = noPai->ponteiros[posicao];
+			if(noIrmao->quantDados>1){
+				inserirValor(&atual, noPai->dados[posicao]);
+				noPai->dados[posicao] = noIrmao->dados[0];
+				exclui(noIrmao, noIrmao->dados[0]);
+				return true;
+			}	
+		}
+	}
+	return false;
+}
+
+void Arvore234::remover(int valor){
+	NO *atual = busca(valor);
+	NO *tempNo;
+	int valorTroca;
+	if(atual!=0){
+		if(!eFolha(&atual)){
+			for(int i=0;i<atual->quantDados;i++){
+				if(atual->dados[i]==valor){
+					tempNo = encontraSucessor(atual,valor);
+					atual->dados[i]=tempNo->dados[0];
+					valorTroca = atual->dados[i];
+				}
+			}
+			atual = tempNo;
+			exclui(atual, valorTroca);		
+		}
+	}
+	else{
+		exclui(atual, valor);
+	}
+	while(1){
+		if(atual->quantDados!=0){
+			return;
+		}
+		else if(rotar(atual)){
+			return;
+		}
+		else if(atual->pai == raiz){
+			NO *noPai = atual->pai;
+			if(noPai->quantDados==1){
+				if(noPai->ponteiros[0]!=atual)
+					inserirValor(&noPai, (noPai->ponteiros[0])->dados[0]);
+				if(noPai->ponteiros[1]!=atual)
+					inserirValor(&noPai, (noPai->ponteiros[1])->dados[0]);
+				atual = noPai;
+				//falta liberar o espaço na memoria
+				atual->ponteiros[0] = 0;
+				return;
+			}
+			else{
+				int posicao;
+				NO *noIrmao;
+				for(int i=0;i<=noPai->quantDados;i++){
+					if(noPai->ponteiros[i]==atual){
+						posicao = i;
+						break;
+					}
+				}
+				if(posicao<noPai->quantDados){
+					noIrmao = noPai->ponteiros[posicao+1];
+					inserirValor(&atual, noPai->dados[posicao]);
+					inserirValor(&atual, noIrmao->dados[0]);
+					exclui(noPai,noPai->dados[posicao]);
+					//falta liberar memoria
+					for(int i=posicao+1;i<noPai->quantDados+1;i++){
+						noPai->ponteiros[i] = noPai->ponteiros[i+1];
+					}
+					return;
+				}
+				else{
+					noIrmao = noPai->ponteiros[posicao-1];
+					inserirValor(&atual, noPai->dados[posicao-1]);
+					inserirValor(&atual, noIrmao->dados[0]);
+					//falta liberar memoria
+					noPai->ponteiros[posicao-1] = atual;
+					exclui(noPai,noPai->dados[posicao-1]);
+					return;
+				}
+			}
+		}
+		
+		atual = atual->pai;
 	}
 }
 
