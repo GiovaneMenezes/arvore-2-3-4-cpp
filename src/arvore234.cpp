@@ -179,6 +179,7 @@ void Arvore234::inserirValor(NO **atual, int valor){
 void Arvore234::bubblesort(NO **atual){
 	int quant = (*atual)->quantDados;
 	int temp;
+	//ordena os valores do nó
 	for(int i=0;i<quant;i++){
 		for(int j=i+1;j<quant;j++){
 			if((*atual)->dados[i]>(*atual)->dados[j]){
@@ -188,7 +189,7 @@ void Arvore234::bubblesort(NO **atual){
 			}
 		}
 	}
-	//se o no nao for folha, realiza um bubblesort para ordenar os valores do NO.
+	//se o no nao for folha, realiza um bubblesort para ordenar os filhos do NO.
 	if(!eFolha(atual)){
 		NO *temp_no;
 		for(int i=0;i<=quant;i++){
@@ -233,7 +234,7 @@ void Arvore234::exclui(NO *atual, int valor){
 	atual->quantDados--;
 }
 
-//MARK: Privado - Rotacao com Bug
+//MARK: Privado - Verifica se é possivel realizar rotação com algum dos irmãos, caso seja, rota e retorna true.
 bool Arvore234::rotar(NO *atual){
 	int posicao;
 	NO *noPai = atual->pai;
@@ -275,19 +276,26 @@ void Arvore234::remover(int valor){
 	NO *atual = busca(valor);
 	NO *tempNo;
 	int valorTroca;
+	
 	if(atual!=0){
 		if(!eFolha(&atual)){
+			//encontre uma folha com o sucessor S(valorTroca) mais próximo de K(valor)
 			for(int i=0;i<atual->quantDados;i++){
 				if(atual->dados[i]==valor){
 					tempNo = encontraSucessor(atual,valor);
+					//copia S sobre K no node;
 					atual->dados[i]=tempNo->dados[0];
 					valorTroca = atual->dados[i];
+					break;
 				}
 			}
+			//atual = a folha que contem S;
 			atual = tempNo;
+			//remove s de atual;
 			exclui(atual, valorTroca);
 		}
 		else{
+			//remova K de node;
 			exclui(atual, valor);
 		}
 	}
@@ -295,11 +303,12 @@ void Arvore234::remover(int valor){
 		if(atual->quantDados!=0){
 			return;
 		}
-		else if(rotar(atual)){
+		else if(rotar(atual)){ //senão se há um irmão de node com chaves suficientes então execute a rotação.
 			return;
 		}
 		else{
 			NO *noPai = atual->pai;
+			//Se o ascendente tem somente uma chave então faça a fusão de node, seu irmão e o ascendente para formar uma nova raiz;
 			if(noPai->quantDados==1){
 				if(noPai->ponteiros[0]!=atual)
 					inserirValor(&noPai, (noPai->ponteiros[0])->dados[0]);
@@ -311,14 +320,17 @@ void Arvore234::remover(int valor){
 				return;
 			}
 			else{
+				//faça a fusão de node e seu irmão;
 				int posicao;
 				NO *noIrmao;
+				//procura em qual posição de filho está o atual.
 				for(int i=0;i<=noPai->quantDados;i++){
 					if(noPai->ponteiros[i]==atual){
 						posicao = i;
 						break;
 					}
 				}
+				//se não for a ultima posição rota para a direita
 				if(posicao<noPai->quantDados){
 					noIrmao = noPai->ponteiros[posicao+1];
 					inserirValor(&atual, noPai->dados[posicao]);
@@ -330,6 +342,7 @@ void Arvore234::remover(int valor){
 					}
 					return;
 				}
+				//senão rota para a esquerda
 				else{
 					noIrmao = noPai->ponteiros[posicao-1];
 					inserirValor(&atual, noPai->dados[posicao-1]);
@@ -341,8 +354,6 @@ void Arvore234::remover(int valor){
 				}
 			}
 		}
-        //Quando isso aqui sera executado ?? - Corrigir BUG
-		atual = atual->pai;
 	}
 }
 
@@ -364,6 +375,7 @@ void Arvore234::imprime(){
 }
 
 //MARK: Usuario - Buscar
+// verifica se o valor está na árvore.
 bool Arvore234::buscaValor(int valor){
 	if(busca(valor)!=0)
 		return true;
