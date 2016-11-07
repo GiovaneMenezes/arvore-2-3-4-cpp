@@ -237,8 +237,8 @@ bool Arvore234::rotar(NO *atual){
 				return true;
 			}				
 		}
-		if(posicao==0){
-			noIrmao = noPai->ponteiros[posicao];
+		if(posicao<noPai->quantDados){
+			noIrmao = noPai->ponteiros[posicao+1];
 			if(noIrmao->quantDados>1){
 				inserirValor(&atual, noPai->dados[posicao]);
 				noPai->dados[posicao] = noIrmao->dados[0];
@@ -266,9 +266,9 @@ void Arvore234::remover(int valor){
 			atual = tempNo;
 			exclui(atual, valorTroca);		
 		}
-	}
-	else{
-		exclui(atual, valor);
+		else{
+			exclui(atual, valor);
+		}
 	}
 	while(1){
 		if(atual->quantDados!=0){
@@ -277,7 +277,7 @@ void Arvore234::remover(int valor){
 		else if(rotar(atual)){
 			return;
 		}
-		else if(atual->pai == raiz){
+		else{
 			NO *noPai = atual->pai;
 			if(noPai->quantDados==1){
 				if(noPai->ponteiros[0]!=atual)
