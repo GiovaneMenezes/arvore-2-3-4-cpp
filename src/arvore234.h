@@ -12,6 +12,7 @@ class Arvore234{
 		void inserir(int);//**
 		void imprime();
 		void remover(int);
+		bool buscaValor(int);
 		//void imprimir();
 	private:
 		NO *raiz;

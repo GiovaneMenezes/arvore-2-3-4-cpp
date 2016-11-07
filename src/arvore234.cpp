@@ -13,7 +13,7 @@ Arvore234::Arvore234(){
 	raiz->pai = 0;
 }
 
-
+//verifica se o nó atual é raiz, comparando o nó pai com nulo
 bool Arvore234::eRaiz(NO **atual){ //**
 	if((*atual)->pai == 0)
 		return true;
@@ -21,6 +21,7 @@ bool Arvore234::eRaiz(NO **atual){ //**
 		return false;
 }
 
+//verifica se o nó é folha, observando se o filho mais a esquerda (posição 0) é nulo
 bool Arvore234::eFolha(NO **atual){ //**
 	if((*atual)->ponteiros[0] == 0)
 		return true;
@@ -29,6 +30,7 @@ bool Arvore234::eFolha(NO **atual){ //**
 }
 
 //FunÃ§Ã£o Auxiliar de Busca
+//Verifica se o nó atual contem o valor.
 bool Arvore234::estanoNo(NO **atual, int valor){ //**
 	int quant = (*atual)->quantDados;
 	for(int i=0;i<=quant-1;i++){
@@ -43,29 +45,30 @@ bool Arvore234::estanoNo(NO **atual, int valor){ //**
 //o valor
 
 //funcao auxiliar da busca
+//procura em qual filho do nó possivelmente está o valor buscado
 NO* Arvore234::encontraNoFilho(NO **atual, int valor){ //**
 	int quant = (*atual)->quantDados;
-	if(eFolha(atual))//se for folhar nao tem filhos posiveis retorna 0
+	if(eFolha(atual))//se for folha nao tem filhos posiveis, retorna null
 		return 0;
 	else{//senÃ£o buscar posiÃ§Ã£o do possivel filho 
-		for(int i=0;i<=quant-1;i++){
-			if((*atual)->dados[i] > valor){
-				return (*atual)->ponteiros[i];	
+		for(int i=0;i<=quant-1;i++){ //percorre o vetor até a posição quant-1
+			if((*atual)->dados[i] > valor){ // se o dado da posição atual for maior que o valor buscado
+				return (*atual)->ponteiros[i];	//retorna o finho na posição i do no atual
 			}
 		}
-		return (*atual)->ponteiros[quant];
+		return (*atual)->ponteiros[quant]; //caso o valor buscado seja maior que todos os elementos, retorna o ultimo filho
 	}
 }
 
 //busca um determinado valor na arvore
 NO* Arvore234::busca(int valor){ //**
 	NO *atual = raiz;
-	while(atual!=0){
-		if(estanoNo(&atual, valor)){
-			return atual;
+	while(atual!=0){ //percorre até encontrar uma folha
+		if(estanoNo(&atual, valor)){ //confere se o valr está no nó atual
+			return atual; //se sim retorna o nó atual
 		}
 		else{
-			atual = encontraNoFilho(&atual, valor);
+			atual = encontraNoFilho(&atual, valor); //busca o proximo possivel filho
 		}
 	}
 	return 0;
@@ -99,7 +102,7 @@ void Arvore234::inserir(int valor){
 void Arvore234::divide(NO **atual){
 	//se for raiz
 	if((*atual)->pai == 0){
-		//cria novo NO B
+		//cria novo NO B que será a próxima raiz
 		NO *B = new NO;
 		for(int i=0;i<4;i++){B->ponteiros[i]=0;}
 		B->ponteiros[1] = *atual;
@@ -108,6 +111,7 @@ void Arvore234::divide(NO **atual){
 		B->dados[0] = (*atual)->dados[1];
 		
 		//cria novo NO C
+		//será o irmão a direita do nó atual
 		NO *C = new NO;
 		for(int i=0;i<4;i++){C->ponteiros[i]=0;}
 		C->ponteiros[1] = *atual;
@@ -121,6 +125,7 @@ void Arvore234::divide(NO **atual){
 			((*atual)->ponteiros[3])->pai = C;
 		}
 		
+		//apontamentos do nó B para os filhos
 		B->ponteiros[0] = *atual;
 		B->ponteiros[1] = C;
 		(*atual)->pai = B;
@@ -338,4 +343,11 @@ void Arvore234::imprime(NO *atual){
 
 void Arvore234::imprime(){
 	imprime(raiz);
+}
+
+bool Arvore234::buscaValor(int valor){
+	if(busca(valor)!=0)
+		return true;
+	else
+		return false;
 }

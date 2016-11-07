@@ -11,15 +11,17 @@ int main() {
 
 
 	//Inserindo valores na Árvore
-	for(int i=1;i<=10;i++){
+	for(int i=1;i<=100000000;i++){
 		arvore234.inserir(i);
 	}
-	arvore234.remover(7);
-	arvore234.imprime();
+	//arvore234.remover(7);
+	//arvore234.imprime();
 	
-	/*if(arvore234.busca(77))
+	cout << "Arvore construida" << endl;
+	
+	if(arvore234.buscaValor(54678))
 		cout << "Encontrou!!" << endl;
 	else
-		cout << "Tenta outro!" << endl;*/
+		cout << "Tenta outro!" << endl;
 	return 0;
 }
