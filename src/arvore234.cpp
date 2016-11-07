@@ -1,11 +1,22 @@
+/********************************************************************
+    * Implementa√ß√£o Arvore 2-3-4 em C++ Insercao, Busca e Remocao   *
+    * Estrutura de dados e Algoritmos III                           *
+    * Professor: Ant√¥nio Ramos de Carvalho Junior                   *
+    * FUCAPI - 07/11/2016 - Manaus-AM                               *
+    *                                                               *
+    * Team: Giovane Menezes - Engenharia de Computacao              *
+    *       David Camur√ßa  - Engenharia de Software                 *
+*********************************************************************/
+
 #include <iostream>
 #include <stdlib.h>
 #include "arvore234.h"
 
 using namespace std;
 
+//MARK: Construtor - Cria a Arvore
 Arvore234::Arvore234(){
-	//A raiz da √°rvore √© criada
+	//A raiz da arvore e criada
 	//o primeiro filho recebe nulo
 	raiz = new NO;
 	for(int i=0;i<4;i++){raiz->ponteiros[i] = 0;}
@@ -13,15 +24,16 @@ Arvore234::Arvore234(){
 	raiz->pai = 0;
 }
 
-//verifica se o nÛ atual È raiz, comparando o nÛ pai com nulo
+//MARK: Privado - E Raiz?
+//verifica se o NO atual e raiz, comparando o NO pai com nulo
 bool Arvore234::eRaiz(NO **atual){ //**
 	if((*atual)->pai == 0)
 		return true;
 	else
 		return false;
 }
-
-//verifica se o nÛ È folha, observando se o filho mais a esquerda (posiÁ„o 0) È nulo
+//MARK: Privado - E Folha?
+//Verifica se o NO e folha, observando se o filho mais a esquerda (posicao 0) e nulo
 bool Arvore234::eFolha(NO **atual){ //**
 	if((*atual)->ponteiros[0] == 0)
 		return true;
@@ -29,43 +41,40 @@ bool Arvore234::eFolha(NO **atual){ //**
 		return false;
 }
 
-//Fun√ß√£o Auxiliar de Busca
-//Verifica se o nÛ atual contem o valor.
+//MARK: Privado - Funcao auxiliar de busca
+//Verifica se o NO atual contem o valor.
 bool Arvore234::estanoNo(NO **atual, int valor){ //**
 	int quant = (*atual)->quantDados;
 	for(int i=0;i<=quant-1;i++){
 		if((*atual)->dados[i] == valor)
 			return true;
 	}
-	return false;	
+	return false;
 }
 
-//Fun√ß√£o utilizada tanto na fun√ß√£o de Busca e Insers√£o
-//Essa fun√ß√£o retorna o filho do no atual, onde deve esta
-//o valor
-
-//funcao auxiliar da busca
-//procura em qual filho do nÛ possivelmente est· o valor buscado
+//MARK: Privado - Encontrar Filho
+//Funcao utilizada tanto na fun√ß√£o de busca e insercao
+//procura em qual filho do NO possivelmente esta o valor buscado
 NO* Arvore234::encontraNoFilho(NO **atual, int valor){ //**
 	int quant = (*atual)->quantDados;
-	if(eFolha(atual))//se for folha nao tem filhos posiveis, retorna null
+	if(eFolha(atual))//se for folha nao tem filhos posiveis, retorna nulo
 		return 0;
-	else{//sen√£o buscar posi√ß√£o do possivel filho 
-		for(int i=0;i<=quant-1;i++){ //percorre o vetor atÈ a posiÁ„o quant-1
-			if((*atual)->dados[i] > valor){ // se o dado da posiÁ„o atual for maior que o valor buscado
-				return (*atual)->ponteiros[i];	//retorna o finho na posiÁ„o i do no atual
+	else{//senao buscar posicao do possivel filho
+		for(int i=0;i<=quant-1;i++){ //percorre o vetor ate a posicao quant-1
+			if((*atual)->dados[i] > valor){ // se o dado da posicao atual for maior que o valor buscado
+				return (*atual)->ponteiros[i];	//retorna o finho na posicao [i] do no atual
 			}
 		}
 		return (*atual)->ponteiros[quant]; //caso o valor buscado seja maior que todos os elementos, retorna o ultimo filho
 	}
 }
 
-//busca um determinado valor na arvore
+//MARK: Publico - Buscar determinado valor na arvore.
 NO* Arvore234::busca(int valor){ //**
 	NO *atual = raiz;
-	while(atual!=0){ //percorre atÈ encontrar uma folha
-		if(estanoNo(&atual, valor)){ //confere se o valr est· no nÛ atual
-			return atual; //se sim retorna o nÛ atual
+	while(atual!=0){ //percorre ate encontrar uma folha
+		if(estanoNo(&atual, valor)){ //confere se o valor esta no NO atual
+			return atual; //se sim retorna o NO atual
 		}
 		else{
 			atual = encontraNoFilho(&atual, valor); //busca o proximo possivel filho
@@ -74,44 +83,42 @@ NO* Arvore234::busca(int valor){ //**
 	return 0;
 }
 
-//inserir 
+//MARK: Publico - Funcao inserir
 void Arvore234::inserir(int valor){
 	NO *atual = raiz;
 	while(1){
 		if (atual->quantDados == 3){
-			divide(&atual);//caso o No esteja cheio, iremos dividir
-			atual = atual->pai;
+			divide(&atual);//caso o NO esteja cheio, iremos dividir
+			atual = atual->pai; //o no atual agora passa ser o pai apos a divisao
 			atual = encontraNoFilho(&atual, valor); //busca o filho onde ser√° inserido
 		}
 		else if(eFolha(&atual)){
 			break;//se for folha, interrompe a busca pela posicao
-			
 		}else{
 			atual = encontraNoFilho(&atual, valor);//caso nao seja necessario dividir, buscar o filho onde sera inserido
-
 		}
-
 	}
-	//ap√≥s a busca por filho insere o valor na posicao encontrada/atual;
+	//apos buscar a posicao para ser alocado, insere o valor na posicao encontrada/atual;
 	inserirValor(&atual, valor);
 
 }
- 
 
-//fun√ß√£o divide, auxilia na inser√ß√£o
+
+//MARK: Privado - Divide, essa funcao contem os dois tipos de divisao, Dividir
+//Raiz e o primeiro caso, se nao for raiz, tem o SENAO que dividira o NO atual
 void Arvore234::divide(NO **atual){
 	//se for raiz
 	if((*atual)->pai == 0){
-		//cria novo NO B que ser· a prÛxima raiz
+		//cria novo NO B que sera a proxima raiz
 		NO *B = new NO;
 		for(int i=0;i<4;i++){B->ponteiros[i]=0;}
 		B->ponteiros[1] = *atual;
 		B->pai = 0;
 		B->quantDados = 1;
 		B->dados[0] = (*atual)->dados[1];
-		
+
 		//cria novo NO C
-		//ser· o irm„o a direita do nÛ atual
+		//sera o irmao a direita do NO atual
 		NO *C = new NO;
 		for(int i=0;i<4;i++){C->ponteiros[i]=0;}
 		C->ponteiros[1] = *atual;
@@ -124,20 +131,20 @@ void Arvore234::divide(NO **atual){
 			C->ponteiros[1] = (*atual)->ponteiros[3];
 			((*atual)->ponteiros[3])->pai = C;
 		}
-		
-		//apontamentos do nÛ B para os filhos
+
+		//apontamentos do NO B para os filhos
 		B->ponteiros[0] = *atual;
 		B->ponteiros[1] = C;
 		(*atual)->pai = B;
 		(*atual)->quantDados = 1;
-		raiz = B; //raiz atributo da classe	
+		raiz = B; //raiz atributo da classe
 	}
-	//se n„o È raiz
+	//Caso o NO a ser dividido nao for RAIZ
 	else{
 		NO *paiNo = (*atual)->pai;
 		//envia B para o pai do atual
 		paiNo->dados[paiNo->quantDados++] = (*atual)->dados[1];
-		
+
 		//cria novo NO C
 		NO *C = new NO;
 		for(int i=0;i<3;i++){C->ponteiros[i]=0;}
@@ -151,13 +158,16 @@ void Arvore234::divide(NO **atual){
 			C->ponteiros[1] = (*atual)->ponteiros[3];
 			((*atual)->ponteiros[3])->pai = C;
 		}
-		
-		paiNo->ponteiros[paiNo->quantDados] = C; 
+
+		paiNo->ponteiros[paiNo->quantDados] = C;
 		(*atual)->quantDados = 1;
 	}
 	bubblesort(&(*atual)->pai);
 }
 
+//MARK: Privado - Inserir valor e auxiliar da funcao publica Inserir, quando todo
+//quando a busca pela espaco estiver pronto, chamamos a funcao que ira inserir
+//o valor na arvore
 void Arvore234::inserirValor(NO **atual, int valor){
 	int quant = (*atual)->quantDados;
 	(*atual)->dados[quant] = valor;
@@ -165,6 +175,7 @@ void Arvore234::inserirValor(NO **atual, int valor){
 	bubblesort(atual);
 }
 
+//MARK: Privado - Ordena os dados do vetor de [chaves] apos Inserir ou uma divisao
 void Arvore234::bubblesort(NO **atual){
 	int quant = (*atual)->quantDados;
 	int temp;
@@ -177,7 +188,7 @@ void Arvore234::bubblesort(NO **atual){
 			}
 		}
 	}
-	//se o no nao for folha, realiza um bubblesort para ordenar os ponteiros do no.
+	//se o no nao for folha, realiza um bubblesort para ordenar os valores do NO.
 	if(!eFolha(atual)){
 		NO *temp_no;
 		for(int i=0;i<=quant;i++){
@@ -192,6 +203,7 @@ void Arvore234::bubblesort(NO **atual){
 	}
 }
 
+//MARK: Privado - Encontrar o sucessor na hora que remover o NO
 NO* Arvore234::encontraSucessor(NO *atual, int valor){
 	if(!eFolha(&atual)){
 		for(int i=0;i<atual->quantDados;i++){
@@ -207,6 +219,7 @@ NO* Arvore234::encontraSucessor(NO *atual, int valor){
 	return atual;
 }
 
+//MARK: Privado - Exclui o NO, funcao auxiliar do remover
 void Arvore234::exclui(NO *atual, int valor){
 	int pos;
 	for(int i=0;i<atual->quantDados;i++){
@@ -220,6 +233,7 @@ void Arvore234::exclui(NO *atual, int valor){
 	atual->quantDados--;
 }
 
+//MARK: Privado - Rotacao com Bug
 bool Arvore234::rotar(NO *atual){
 	int posicao;
 	NO *noPai = atual->pai;
@@ -240,7 +254,7 @@ bool Arvore234::rotar(NO *atual){
 				noPai->dados[posicao-1] = noIrmao->dados[quantIrmao-1];
 				exclui(noIrmao, noIrmao->dados[quantIrmao-1]);
 				return true;
-			}				
+			}
 		}
 		if(posicao<noPai->quantDados){
 			noIrmao = noPai->ponteiros[posicao+1];
@@ -249,12 +263,14 @@ bool Arvore234::rotar(NO *atual){
 				noPai->dados[posicao] = noIrmao->dados[0];
 				exclui(noIrmao, noIrmao->dados[0]);
 				return true;
-			}	
+			}
 		}
 	}
 	return false;
 }
 
+
+//MARK: Privado - Remover, contem bugs, nao estamos conseguindo aplicar a rotacao.
 void Arvore234::remover(int valor){
 	NO *atual = busca(valor);
 	NO *tempNo;
@@ -269,7 +285,7 @@ void Arvore234::remover(int valor){
 				}
 			}
 			atual = tempNo;
-			exclui(atual, valorTroca);		
+			exclui(atual, valorTroca);
 		}
 		else{
 			exclui(atual, valor);
@@ -290,7 +306,7 @@ void Arvore234::remover(int valor){
 				if(noPai->ponteiros[1]!=atual)
 					inserirValor(&noPai, (noPai->ponteiros[1])->dados[0]);
 				atual = noPai;
-				//falta liberar o espaÁo na memoria
+				//falta liberar o espaco na memoria
 				atual->ponteiros[0] = 0;
 				return;
 			}
@@ -325,11 +341,12 @@ void Arvore234::remover(int valor){
 				}
 			}
 		}
-		
+        //Quando isso aqui sera executado ?? - Corrigir BUG
 		atual = atual->pai;
 	}
 }
 
+//MARK: Privado - Imprimir
 void Arvore234::imprime(NO *atual){
 	int quant=atual->quantDados;
 	for(int i=0;i<quant;i++)
@@ -341,10 +358,12 @@ void Arvore234::imprime(NO *atual){
 	}
 }
 
+//MARK: Usuario - Imprimir
 void Arvore234::imprime(){
 	imprime(raiz);
 }
 
+//MARK: Usuario - Buscar
 bool Arvore234::buscaValor(int valor){
 	if(busca(valor)!=0)
 		return true;
