@@ -1,3 +1,12 @@
+/********************************************************************
+    * Implementação Arvore 2-3-4 em C++ Insercao, Busca e Remocao   *
+    * Estrutura de dados e Algoritmos III                           *
+    * Professor: Antônio Ramos de Carvalho Junior                   *
+    * FUCAPI - 07/11/2016 - Manaus-AM                               *
+    *                                                               *
+    * Team: Giovane Menezes - Engenharia de Computacao              *
+    *       David Camurça  - Engenharia de Software                 *
+*********************************************************************/
 
 typedef struct no {
 	struct no* pai;
@@ -13,7 +22,7 @@ class Arvore234{
 		void imprime();
 		void remover(int);
 		bool buscaValor(int);
-		//void imprimir();
+
 	private:
 		NO *raiz;
 		NO *busca(int); //**
