@@ -1,11 +1,11 @@
 /********************************************************************
-    * Implementa√ß√£o Arvore 2-3-4 em C++ Insercao, Busca e Remocao   *
+    * Implementacao Arvore 2-3-4 em C++ Insercao, Busca e Remocao   *
     * Estrutura de dados e Algoritmos III                           *
-    * Professor: Ant√¥nio Ramos de Carvalho Junior                   *
+    * Professor: Antonio Ramos de Carvalho Junior                   *
     * FUCAPI - 07/11/2016 - Manaus-AM                               *
     *                                                               *
     * Team: Giovane Menezes - Engenharia de Computacao              *
-    *       David Camur√ßa  - Engenharia de Software                 *
+    *       David Camur√É¬ßa  - Engenharia de Software                 *
 *********************************************************************/
 
 #include <iostream>
@@ -53,7 +53,7 @@ bool Arvore234::estanoNo(NO **atual, int valor){ //**
 }
 
 //MARK: Privado - Encontrar Filho
-//Funcao utilizada tanto na fun√ß√£o de busca e insercao
+//Funcao utilizada tanto na funcao de busca e insercao
 //procura em qual filho do NO possivelmente esta o valor buscado
 NO* Arvore234::encontraNoFilho(NO **atual, int valor){ //**
 	int quant = (*atual)->quantDados;
@@ -90,7 +90,7 @@ void Arvore234::inserir(int valor){
 		if (atual->quantDados == 3){
 			divide(&atual);//caso o NO esteja cheio, iremos dividir
 			atual = atual->pai; //o no atual agora passa ser o pai apos a divisao
-			atual = encontraNoFilho(&atual, valor); //busca o filho onde ser√° inserido
+			atual = encontraNoFilho(&atual, valor); //busca o filho onde ser√É¬° inserido
 		}
 		else if(eFolha(&atual)){
 			break;//se for folha, interrompe a busca pela posicao
@@ -179,7 +179,7 @@ void Arvore234::inserirValor(NO **atual, int valor){
 void Arvore234::bubblesort(NO **atual){
 	int quant = (*atual)->quantDados;
 	int temp;
-	//ordena os valores do nÛ
+	//ordena os valores do n√≥
 	for(int i=0;i<quant;i++){
 		for(int j=i+1;j<quant;j++){
 			if((*atual)->dados[i]>(*atual)->dados[j]){
@@ -234,7 +234,7 @@ void Arvore234::exclui(NO *atual, int valor){
 	atual->quantDados--;
 }
 
-//MARK: Privado - Verifica se È possivel realizar rotaÁ„o com algum dos irm„os, caso seja, rota e retorna true.
+//MARK: Privado - Verifica se √© possivel realizar rota√ß√£o com algum dos irm√£os, caso seja, rota e retorna true.
 bool Arvore234::rotar(NO *atual){
 	int posicao;
 	NO *noPai = atual->pai;
@@ -279,7 +279,7 @@ void Arvore234::remover(int valor){
 	
 	if(atual!=0){
 		if(!eFolha(&atual)){
-			//encontre uma folha com o sucessor S(valorTroca) mais prÛximo de K(valor)
+			//encontre uma folha com o sucessor S(valorTroca) mais pr√≥ximo de K(valor)
 			for(int i=0;i<atual->quantDados;i++){
 				if(atual->dados[i]==valor){
 					tempNo = encontraSucessor(atual,valor);
@@ -303,12 +303,12 @@ void Arvore234::remover(int valor){
 		if(atual->quantDados!=0){
 			return;
 		}
-		else if(rotar(atual)){ //sen„o se h· um irm„o de node com chaves suficientes ent„o execute a rotaÁ„o.
+		else if(rotar(atual)){ //sen√£o se h√° um irm√£o de node com chaves suficientes ent√£o execute a rota√ß√£o.
 			return;
 		}
 		else{
 			NO *noPai = atual->pai;
-			//Se o ascendente tem somente uma chave ent„o faÁa a fus„o de node, seu irm„o e o ascendente para formar uma nova raiz;
+			//Se o ascendente tem somente uma chave ent√£o fa√ßa a fus√£o de node, seu irm√£o e o ascendente para formar uma nova raiz;
 			if(noPai->quantDados==1){
 				if(noPai->ponteiros[0]!=atual)
 					inserirValor(&noPai, (noPai->ponteiros[0])->dados[0]);
@@ -320,17 +320,17 @@ void Arvore234::remover(int valor){
 				return;
 			}
 			else{
-				//faÁa a fus„o de node e seu irm„o;
+				//fa√ßa a fus√£o de node e seu irm√£o;
 				int posicao;
 				NO *noIrmao;
-				//procura em qual posiÁ„o de filho est· o atual.
+				//procura em qual posi√ß√£o de filho est√° o atual.
 				for(int i=0;i<=noPai->quantDados;i++){
 					if(noPai->ponteiros[i]==atual){
 						posicao = i;
 						break;
 					}
 				}
-				//se n„o for a ultima posiÁ„o rota para a direita
+				//se n√£o for a ultima posi√ß√£o rota para a direita
 				if(posicao<noPai->quantDados){
 					noIrmao = noPai->ponteiros[posicao+1];
 					inserirValor(&atual, noPai->dados[posicao]);
@@ -342,7 +342,7 @@ void Arvore234::remover(int valor){
 					}
 					return;
 				}
-				//sen„o rota para a esquerda
+				//sen√£o rota para a esquerda
 				else{
 					noIrmao = noPai->ponteiros[posicao-1];
 					inserirValor(&atual, noPai->dados[posicao-1]);
@@ -375,7 +375,7 @@ void Arvore234::imprime(){
 }
 
 //MARK: Usuario - Buscar
-// verifica se o valor est· na ·rvore.
+// verifica se o valor esta na arvore.
 bool Arvore234::buscaValor(int valor){
 	if(busca(valor)!=0)
 		return true;
